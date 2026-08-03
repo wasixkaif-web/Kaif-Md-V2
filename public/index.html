@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIF-MD V2 Control Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b141a 0%, #111b21 50%, #081014 100%);
+            --card-bg: rgba(17, 27, 33, 0.85);
+            --whatsapp: #25d366;
+            --whatsapp-dark: #075e54;
+            --whatsapp-gradient: linear-gradient(135deg, #25d366 0%, #128C7E 100%);
+            --accent: #e9edef;
+            --text-secondary: #8696a0;
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            --danger: #ff4d4d;
+            --danger-gradient: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-gradient); color: var(--accent); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .container { width: 100%; max-width: 640px; }
+        .card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 28px; padding: 28px 24px; box-shadow: var(--shadow); }
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
+        .logo-area { display: flex; align-items: center; gap: 14px; }
+        .logo-icon { width: 52px; height: 52px; background: var(--whatsapp-gradient); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+        .logo-text h1 { font-size: 24px; font-weight: 800; background: linear-gradient(to right, #fff, var(--whatsapp)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2px; letter-spacing: -0.5px; }
+        .logo-text span { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .status-container { display: flex; flex-direction: column; gap: 6px; }
+        .status-badge { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffaa33; }
+        .status-dot.connected { background: var(--whatsapp); box-shadow: 0 0 10px var(--whatsapp); }
+        .status-dot.disconnected { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+        .qr-section { background: rgba(0, 0, 0, 0.3); border-radius: 20px; padding: 20px 16px; margin-bottom: 24px; text-align: center; border: 1px dashed var(--border); }
+        .qr-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--whatsapp); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .qr-wrapper { background: white; padding: 12px; border-radius: 16px; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 12px; }
+        .qr-wrapper img { max-width: 220px; width: 100%; height: auto; border-radius: 8px; display: block; }
+        .scan-hint { background: rgba(37, 211, 102, 0.15); padding: 10px 18px; border-radius: 100px; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; color: var(--whatsapp); font-weight: 600; }
+        .no-qr { padding: 20px; color: var(--text-secondary); font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .section-header { font-size: 13px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .quick-toggles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .toggle-card { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .toggle-card label { font-size: 12px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+        .toggle-btn { padding: 12px; border-radius: 14px; font-size: 13px; font-weight: 700; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .toggle-btn.active { background: var(--whatsapp-gradient); border-color: var(--whatsapp); color: white; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3); }
+        .toggle-btn.off { background: rgba(255, 77, 77, 0.15); border-color: var(--danger); color: var(--danger); }
+        .config-section { background: rgba(0, 0, 0, 0.25); border-radius: 22px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--whatsapp); font-weight: 700; font-size: 13px; }
+        .form-control { width: 100%; padding: 14px; border-radius: 14px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); color: white; font-family: 'Inter', monospace; font-size: 13px; transition: all 0.2s ease; }
+        .form-control:focus { outline: none; border-color: var(--whatsapp); background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15); }
+        .action-btns { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 16px; }
+        .btn { padding: 16px; border-radius: 100px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; transition: all 0.2s ease; color: white; }
+        .btn:active { transform: scale(0.98); }
+        .btn-save { background: var(--whatsapp-gradient); box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3); }
+        .btn-delete { background: var(--danger-gradient); box-shadow: 0 6px 16px rgba(255, 77, 77, 0.3); }
+        #configMessage { margin-top: 14px; text-align: center; font-size: 13px; font-weight: 600; min-height: 20px; }
+        .social-grid { display: flex; gap: 12px; margin-top: 16px; }
+        .social-btn { flex: 1; padding: 14px; border-radius: 100px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: white; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); transition: all 0.2s ease; }
+        .btn-channel { background: linear-gradient(135deg, #075e54, #25d366); }
+        .btn-github { background: #1b1f23; }
+        .footer { text-align: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 12px; }
+        .footer a { color: var(--whatsapp); text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="logo-area">
+                    <div class="logo-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div class="logo-text">
+                        <h1>KAIF-MD V2</h1>
+                        <span>CONTROL DASHBOARD</span>
+                    </div>
+                </div>
+                <div class="status-container">
+                    <div class="status-badge">
+                        <div class="status-dot" id="whatsappStatusDot"></div>
+                        <span id="whatsappStatusText">WA</span>
+                    </div>
+                    <div class="status-badge">
+                        <div class="status-dot" id="dbStatusDot"></div>
+                        <span id="dbStatusText">DB</span>
+                    </div>
+                </div>
+            </div>
+            <div class="qr-section">
+                <div class="qr-title">
+                    <i class="fas fa-qrcode"></i>
+                    <span>WhatsApp QR Scan</span>
+                </div>
+                <div class="qr-container" id="qrContainer">
+                    <div class="no-qr">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Loading WhatsApp QR...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="section-header">
+                <i class="fas fa-sliders-h" style="color: #25d366;"></i> Feature Switches
+            </div>
+            <div class="quick-toggles">
+                <div class="toggle-card">
+                    <label><i class="fas fa-paper-plane" style="color: #25d366;"></i> Auto Forward</label>
+                    <button id="btnToggleAutoForward" class="toggle-btn active" onclick="toggleAutoForward()">
+                        <i class="fas fa-toggle-on"></i> ON
+                    </button>
+                </div>
+                <div class="toggle-card">
+                    <label><i class="fas fa-eye" style="color: #25d366;"></i> Auto Status</label>
+                    <button id="btnToggleAutoStatus" class="toggle-btn active" onclick="toggleAutoStatus()">
+                        <i class="fas fa-toggle-on"></i> ON
+                    </button>
+                </div>
+                <div class="toggle-card">
+                    <label><i class="fas fa-trash-alt" style="color: #25d366;"></i> Anti Delete</label>
+                    <button id="btnToggleAntiDelete" class="toggle-btn active" onclick="toggleAntiDelete()">
+                        <i class="fas fa-comments"></i> CHAT
+                    </button>
+                </div>
+            </div>
+            <div class="section-header">
+                <i class="fas fa-exchange-alt" style="color: #25d366;"></i> Routing &amp; Text Replacements
+            </div>
+            <div class="config-section">
+                <div class="form-group">
+                    <label><i class="fas fa-sign-in-alt"></i> SOURCE JIDs (Comma Separated)</label>
+                    <textarea id="sourceJids" class="form-control" rows="2" placeholder="1234567890@g.us, 9876543210@g.us"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sign-out-alt"></i> TARGET JIDs (Comma Separated)</label>
+                    <textarea id="targetJids" class="form-control" rows="2" placeholder="1111111111@g.us, 2222222222@g.us"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-search"></i> OLD TEXT / PATTERN TO REPLACE</label>
+                    <input type="text" id="oldTextRegex" class="form-control" placeholder="old text, http://example.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-pencil-alt"></i> NEW REPLACEMENT TEXT</label>
+                    <input type="text" id="newText" class="form-control" placeholder="new replacement text">
+                </div>
+                <div class="action-btns" style="grid-template-columns: 2fr 1fr 1fr;">
+                    <button onclick="saveConfig()" class="btn btn-save">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button onclick="clearConfig()" class="btn btn-delete">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button onclick="purgeCache()" class="btn" style="background: linear-gradient(135deg, #0088cc 0%, #005588 100%); box-shadow: 0 4px 14px rgba(0, 136, 204, 0.3);">
+                        <i class="fas fa-broom"></i> Purge 24h
+                    </button>
+                </div>
+                <div id="configMessage"></div>
+            </div>
+            <div class="social-grid">
+                <a href="https://whatsapp.com/channel/0029VbDMt1C3rZZaigDWAj1X" target="_blank" class="social-btn btn-channel">
+                    <i class="fab fa-whatsapp"></i> Join Channel
+                </a>
+                <a href="https://github.com/KaifxChaudhary-dev/Kaif-Md" target="_blank" class="social-btn btn-github">
+                    <i class="fab fa-github"></i> GitHub Repo
+                </a>
+            </div>
+            <div class="footer">
+                <p><i class="fas fa-code"></i> Developed by <a href="https://github.com/KaifxChaudhary-dev">Kaif x Chaudhary</a></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentEnabled = true;
+        let currentAutoStatus = true;
+        let currentAntiDeleteMode = 'chat';
+        async function loadConfig() {
+            try {
+                const res = await fetch('/api/config');
+                const data = await res.json();
+                document.getElementById('sourceJids').value = Array.isArray(data.sourceJids) ? data.sourceJids.join(', ') : '';
+                document.getElementById('targetJids').value = Array.isArray(data.targetJids) ? data.targetJids.join(', ') : '';
+                document.getElementById('oldTextRegex').value = Array.isArray(data.oldTextRegex) ? data.oldTextRegex.join(', ') : (data.oldTextRegex || '');
+                document.getElementById('newText').value = data.newText || '';
+                currentEnabled = data.enabled !== false;
+                currentAutoStatus = data.autoStatusSeen !== false;
+                currentAntiDeleteMode = data.antiDeleteMode || 'chat';
+                updateToggleUI();
+            } catch (e) { console.error('Error loading config:', e); }
+        }
+        function updateToggleUI() {
+            const afBtn = document.getElementById('btnToggleAutoForward');
+            if (currentEnabled) {
+                afBtn.className = 'toggle-btn active';
+                afBtn.innerHTML = '<i class="fas fa-toggle-on"></i> ON';
+            } else {
+                afBtn.className = 'toggle-btn off';
+                afBtn.innerHTML = '<i class="fas fa-toggle-off"></i> OFF';
+            }
+            const asBtn = document.getElementById('btnToggleAutoStatus');
+            if (currentAutoStatus) {
+                asBtn.className = 'toggle-btn active';
+                asBtn.innerHTML = '<i class="fas fa-toggle-on"></i> ON';
+            } else {
+                asBtn.className = 'toggle-btn off';
+                asBtn.innerHTML = '<i class="fas fa-toggle-off"></i> OFF';
+            }
+            const adBtn = document.getElementById('btnToggleAntiDelete');
+            if (currentAntiDeleteMode === 'inbox' || currentAntiDeleteMode === 'pm') {
+                adBtn.className = 'toggle-btn active';
+                adBtn.innerHTML = '<i class="fas fa-inbox"></i> INBOX';
+            } else if (currentAntiDeleteMode === 'both') {
+                adBtn.className = 'toggle-btn active';
+                adBtn.innerHTML = '<i class="fas fa-sync"></i> BOTH';
+            } else if (currentAntiDeleteMode === 'off') {
+                adBtn.className = 'toggle-btn off';
+                adBtn.innerHTML = '<i class="fas fa-times-circle"></i> OFF';
+            } else {
+                adBtn.className = 'toggle-btn active';
+                adBtn.innerHTML = '<i class="fas fa-comments"></i> CHAT';
+            }
+        }
+        function toggleAutoForward() { currentEnabled = !currentEnabled; saveConfig(); }
+        function toggleAutoStatus() { currentAutoStatus = !currentAutoStatus; saveConfig(); }
+        function toggleAntiDelete() {
+            const modes = ['chat', 'inbox', 'both', 'off'];
+            const nextIdx = (modes.indexOf(currentAntiDeleteMode) + 1) % modes.length;
+            currentAntiDeleteMode = modes[nextIdx];
+            saveConfig();
+        }
+        async function saveConfig() {
+            const sourceJids = document.getElementById('sourceJids').value.split(',').map(j => j.trim()).filter(Boolean);
+            const targetJids = document.getElementById('targetJids').value.split(',').map(j => j.trim()).filter(Boolean);
+            const oldTextRegex = document.getElementById('oldTextRegex').value.split(',').map(p => p.trim()).filter(Boolean);
+            const newText = document.getElementById('newText').value;
+            const msgDiv = document.getElementById('configMessage');
+            msgDiv.innerHTML = '<span style="color: #25d366;"><i class="fas fa-spinner fa-spin"></i> Saving...</span>';
+            try {
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        enabled: currentEnabled,
+                        autoStatusSeen: currentAutoStatus,
+                        antiDeleteMode: currentAntiDeleteMode,
+                        antiDelete: currentAntiDeleteMode !== 'off',
+                        sourceJids,
+                        targetJids,
+                        oldTextRegex,
+                        newText
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    msgDiv.innerHTML = '<span style="color: #25d366;"><i class="fas fa-check-circle"></i> Saved &amp; Applied Successfully!</span>';
+                    setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
+                } else {
+                    msgDiv.innerHTML = '<span style="color: #ff4d4d;"><i class="fas fa-exclamation-triangle"></i> Failed to save</span>';
+                }
+            } catch (e) {
+                msgDiv.innerHTML = '<span style="color: #ff4d4d;"><i class="fas fa-exclamation-triangle"></i> Network error</span>';
+            }
+            updateToggleUI();
+        }
+                async function purgeCache() {
+            const msgDiv = document.getElementById('configMessage');
+            msgDiv.innerHTML = '<span style="color: #0088cc;"><i class="fas fa-spinner fa-spin"></i> Refreshing storage &amp; purging old messages...</span>';
+            try {
+                const res = await fetch('/api/clear-cache', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    msgDiv.innerHTML = '<span style="color: #25d366;"><i class="fas fa-check-circle"></i> ' + (data.message || 'Storage Refreshed &amp; Purged!') + '</span>';
+                    setTimeout(() => { msgDiv.innerHTML = ''; }, 4000);
+                } else {
+                    msgDiv.innerHTML = '<span style="color: #ff4d4d;"><i class="fas fa-exclamation-triangle"></i> Purge failed</span>';
+                }
+            } catch (e) {
+                msgDiv.innerHTML = '<span style="color: #ff4d4d;"><i class="fas fa-exclamation-triangle"></i> Network error</span>';
+            }
+        }
+        async function clearConfig() {
+            if (!confirm('Are you sure you want to clear all JIDs and text replacements?')) return;
+            document.getElementById('sourceJids').value = '';
+            document.getElementById('targetJids').value = '';
+            document.getElementById('oldTextRegex').value = '';
+            document.getElementById('newText').value = '';
+            await saveConfig();
+        }
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                const whatsappDot = document.getElementById('whatsappStatusDot');
+                const whatsappText = document.getElementById('whatsappStatusText');
+                whatsappDot.className = 'status-dot ' + (data.connected ? 'connected' : 'disconnected');
+                whatsappText.textContent = data.connected ? 'WA ✓' : 'WA ✗';
+                const dbDot = document.getElementById('dbStatusDot');
+                const dbText = document.getElementById('dbStatusText');
+                dbDot.className = 'status-dot ' + (data.dbConnected ? 'connected' : 'disconnected');
+                dbText.textContent = data.dbConnected ? 'DB ✓' : 'DB ✗';
+                const qrContainer = document.getElementById('qrContainer');
+                if (data.qr) {
+                    qrContainer.innerHTML = '<div class="qr-wrapper"><img src="' + data.qr + '" alt="WhatsApp QR Code"></div><div class="scan-hint"><i class="fas fa-camera"></i> Scan with WhatsApp Linked Devices</div>';
+                } else if (data.connected) {
+                    qrContainer.innerHTML = '<div class="no-qr"><i class="fas fa-check-circle" style="color: #25d366; font-size: 48px;"></i><span style="color: #25d366; font-weight: 700;">WhatsApp Connected!</span></div>';
+                } else {
+                    qrContainer.innerHTML = '<div class="no-qr"><i class="fas fa-spinner fa-spin"></i><span>Generating QR Code...</span></div>';
+                }
+            } catch (error) { console.error('Status check error:', e); }
+        }
+        loadConfig();
+        checkStatus();
+        setInterval(checkStatus, 3000);
+    </script>
+</body>
+</html>
