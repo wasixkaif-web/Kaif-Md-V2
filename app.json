@@ -1,27 +1,32 @@
 {
-  "name": "KAIF-MD V2",
-  "description": "WhatsApp Bot with Auto Forward Features",
-  "keywords": ["whatsapp", "bot", "kaif", "mongodb"],
-  "repository": "",
-  "logo": "https://i.ibb.co/d6bLQ7y/whatsapp-logo.png",
-  "success_url": "/",
-  "stack": "heroku-22",
-  "env": {
-    "SESSION_ID": {
-      "description": "Unique session ID for your bot",
-      "required": true
-    },
-    "MONGODB_URL": {
-      "description": "MongoDB connection URL",
-      "required": true
-    }
-  },
-  "buildpacks": [
-    {
-      "url": "heroku-community/apt"
-    },
-    {
-      "url": "heroku/nodejs"
-    }
-  ]
+    "name":  "KAIF-MD V2",
+    "description":  "WhatsApp Bot with Auto Forward Features",
+    "keywords":  [
+                     "whatsapp",
+                     "bot",
+                     "kaif",
+                     "mongodb"
+                 ],
+    "repository":  "",
+    "logo":  "https://i.ibb.co/d6bLQ7y/whatsapp-logo.png",
+    "success_url":  "/",
+    "stack":  "heroku-22",
+    "env":  {
+                "SESSION_ID":  {
+                                   "description":  "Unique session ID for your bot (e.g. wasi_session123). Leave empty or default to auto-generate a unique session ID per deployment.",
+                                   "required":  false
+                               },
+                "MONGODB_URL":  {
+                                    "description":  "MongoDB connection URL",
+                                    "required":  true
+                                }
+            },
+    "buildpacks":  [
+                       {
+                           "url":  "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+                       },
+                       {
+                           "url":  "heroku/nodejs"
+                       }
+                   ]
 }
